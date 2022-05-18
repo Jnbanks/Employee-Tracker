@@ -1,10 +1,6 @@
-console.log("running")
-
 const inquirer = require('inquirer');
 const db = require('./config/connection');
 const mysql = require('mysql2');
-
-
 
 
 function askQuestion() {
@@ -43,10 +39,6 @@ function askQuestion() {
 
             case "update an employee role":
                 updateRole()
-                break;
-
-            case "quit":
-                quit()
                 break;
 
             default:
@@ -216,6 +208,61 @@ const addRole = () => {
   }
 
   // -- UPDATE ROLE
-  
+  const updateRole = () => {
+    db.query("SELECT * FROM employee", (err, eRes) => {
+      if (err) throw err;
+      const empSelect = [];
+      eRes.forEach(({ first_name, last_name, id }) => {
+        empSelect.push({
+          name: first_name + " " + last_name,
+          value: id
+        });
+      });
+      
+      db.query("SELECT * FROM role", (err, rolRes) => {
+        if (err) throw err;
+        const roleSelect = [];
+        rolRes.forEach(({ title, id }) => {
+          roleSelect.push({
+            name: title,
+            value: id
+            });
+          });
+       
+        let questions = [
+          {
+            type: "list",
+            name: "id",
+            choices: empSelect,
+            message: "whose role do you want to update?"
+          },
+          {
+            type: "list",
+            name: "role_id",
+            choices: roleSelect,
+            message: "what is the employee's new role?"
+          }
+        ]
+    
+        inquirer.prompt(questions)
+          .then(response => {
+            const query = `UPDATE employee SET ? WHERE ?? = ?;`;
+            db.query(query, [
+              {role_id: response.role_id},
+              "id",
+              response.id
+            ], (err, res) => {
+              if (err) throw err;
+              
+              console.log("updated employee's role!");
+              askQuestion();
+            });
+          })
+          .catch(err => {
+            console.error(err);
+          });
+        })
+    });
+  }
 
 askQuestion();
