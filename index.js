@@ -55,6 +55,7 @@ function askQuestion() {
     })
 }
 
+// -- VIEW DEPARTMENT, ROLE OR EMPLOYEE TABLE
 const viewAll = (table) => {
     let query;
     if (table === "department") {
@@ -72,91 +73,31 @@ const viewAll = (table) => {
     });
   };
 
-
-
-function viewEmpl() {
-    inquirer.prompt({
+// -- ADD DEPARTMENT
+const addDept = () => {
+    let questions = [
+      {
+        type: "input",
         name: "name",
-        message: "What is your name?",
-        type: "input"
-    }).then(({ name }) => {
-        console.log(name);
-        const me = new Trainer(name);
-        trainers.push(me)
-        console.log(trainers);
+        message: "What is the name of this new department?"
+      }
+    ];
+  
+    inquirer.prompt(questions)
+    .then(response => {
+      const query = `INSERT INTO department (name) VALUES (?)`;
+      db.query(query, [response.name], (err, res) => {
+        if (err) throw err;
+        console.log(`Inserted the ${response.name} department at id ${res.insertId}`);
         askQuestion();
+      });
     })
-}
+    .catch(err => {
+      console.error(err);
+    });
+  }
 
-function viewRoles() {
-    inquirer.prompt({
-        name: "name",
-        message: "What is your name?",
-        type: "input"
-    }).then(({ name }) => {
-        console.log(name);
-        const me = new Trainer(name);
-        trainers.push(me)
-        console.log(trainers);
-        askQuestion();
-    })
-}
+// -- ADD ROLE
 
-
-function addDept() {
-    inquirer.prompt({
-        name: "name",
-        message: "What is your name?",
-        type: "input"
-    }).then(({ name }) => {
-        console.log(name);
-        const me = new Trainer(name);
-        trainers.push(me)
-        console.log(trainers);
-        askQuestion();
-    })
-}
-
-function addRole() {
-    inquirer.prompt({
-        name: "name",
-        message: "What is your name?",
-        type: "input"
-    }).then(({ name }) => {
-        console.log(name);
-        const me = new Trainer(name);
-        trainers.push(me)
-        console.log(trainers);
-        askQuestion();
-    })
-}
-
-function addEmployee() {
-    inquirer.prompt({
-        name: "name",
-        message: "What is your name?",
-        type: "input"
-    }).then(({ name }) => {
-        console.log(name);
-        const me = new Trainer(name);
-        trainers.push(me)
-        console.log(trainers);
-        askQuestion();
-    })
-}
-
-function updateRole() {
-    inquirer.prompt({
-        name: "name",
-        message: "What is your name?",
-        type: "input"
-    }).then(({ name }) => {
-        console.log(name);
-        const me = new Trainer(name);
-        trainers.push(me)
-        console.log(trainers);
-        askQuestion();
-    })
-}
 
 askQuestion();
