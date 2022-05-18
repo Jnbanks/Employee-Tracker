@@ -98,6 +98,55 @@ const addDept = () => {
   }
 
 // -- ADD ROLE
+const addRole = () => {
+    const departments = [];
+    db.query("SELECT * FROM department", (err, res) => {
+      if (err) throw err;
+  
+      res.forEach(dep => {
+        let deptObj = {
+          name: dep.name,
+          value: dep.id
+        }
+        departments.push(deptObj);
+        console.log(deptObj);
+      });
+  
+      let questions = [
+        {
+          type: "input",
+          name: "title",
+          message: "what is the title of the new role?"
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "what is the salary of the new role?"
+        },
+        {
+          type: "list",
+          name: "department",
+          choices: departments,
+          message: "which department is this role in?"
+        }
+      ];
+  
+      inquirer.prompt(questions)
+      .then(response => {
+        const query = `INSERT INTO role (title, salary, department_id) VALUES (?)`;
+        db.query(query, [[response.title, response.salary, response.department]], (err, res) => {
+          if (err) throw err;
+          console.log(`Inserted ${response.title} role at id ${res.insertId}`);
+          askQuestion();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+    });
+  }
 
+  // -- ADD EMPLOYEE
+  
 
 askQuestion();
